@@ -21,15 +21,15 @@ const client = axios.create({
 });
 
 async function checkCommunication() {
-  console.log('\n--- ${appName}のEgressプロキシ通信テストを開始します ---\n');
-  console.log('使用プロキシ:${proxyUrl}\n');
+  console.log(`\n--- ${appName}のEgressプロキシ通信テストを開始します ---\n`);
+  console.log(`使用プロキシ:${proxyUrl}\n`);
 
   await new Promise(resolve => setTimeout(resolve, 10000)); // ローカルでは3秒で機能したが、Actionsだと10秒くらい必要。
 
   // テスト1：許可されるはずの通信 (httpbin.org)
   try {
     console.log('宛先: ${targetUrl} (許可リスト対象)');
-    const res1 = await client.get('targetUrl');
+    const res1 = await client.get(targetUrl);
     // HTTPステータスコード200が返ってきたら成功
     console.log(`✅ 結果: 通信成功 (Status: ${res1.status})`);
   } catch (error) {
