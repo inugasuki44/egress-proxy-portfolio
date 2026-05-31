@@ -15,6 +15,15 @@ jobs:
     steps:
       - name: 1. リポジトリのチェックアウト # ここでリポジトリ上のファイルをUbuntuにチェックアウトする
         uses: actions/checkout@v4
+
+      - name: 1.5. JSONをSquid用のテキストリンクへ変換 # チェックアウトより後に実行しないと、JSONファイルがUbuntuにないのでパニック起こす
+        run: |
+          jq -r `.allowed_domains[]` allow-list.json > allow-list.txt
+        # jqコマンドで"allowed_domwins"の中身だけ取り出してテキストへ変換
+
+          echo "--- 生成されたallow-list.txtの中身をデバッグ出力 ---"
+          cat allow-list.txt
+          
       
       - name: 2. Docker Compose
         run: |
