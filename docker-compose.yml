@@ -1,27 +1,56 @@
 services:
   # ==========================================
-  # 1. Proxyコンテナ (Squid) の定義
+  # 1. App-Aと、Proxy-Aコンテナ (Squid) の定義
   # ==========================================
-  proxy:
-    # 自分でDockerfileを作らなくても、公式が用意している完成品をそのまま使えます
+  proxy-a:
+    # 公式から引用。
     image: ubuntu/squid:latest
-    container_name: egress-proxy
-    ports:
-      - "3128:3128" # 手元のPCからも動作確認できるようにポートを開放
+    container_name: egress-proxy-a
+
     volumes:
       # PC側のファイルを、コンテナの中のSquid設定フォルダに「共有(マウント)」する
       # ※ :ro は Read Only（読み取り専用）の意味。コンテナ側から勝手に書き換えられないようにする防護策。
       - ./proxy/squid.conf:/etc/squid/squid.conf:ro
-      - ./allow-list.txt:/etc/squid/allow-list.txt:ro
+      - ./allow-list-a.txt:/etc/squid/allow-list.txt:ro
 
-  # ==========================================
-  # 2. Appコンテナ (Node.js) の定義
-  # ==========================================
-  app:
-    # appフォルダにあるDockerfileを使って、自前でコンテナをビルド(作成)するよう指示
+  app-a:
+    # appフォルダにあるDockerfileを使って、自前にコンテナをビルドするよう指示している。
     build:
       context: ./app
-    container_name: egress-app
+    container_name: egress-app-a
     depends_on:
       # Proxyコンテナが先に立ち上がってから、Appコンテナを立ち上げるという順序指定
-      - proxy
+      - proxy-a
+    environment:
+      # index.jsに参照されるapp-aの情報は以下
+      - APP_NAME=App-A
+      - HTTP_PROXY=http://proxy-a:3128
+      - TARGET_URL=http://httpbin.org/get
+    networks:
+      - net-a
+  
+  # ==========================================
+  # 1. App-Bと、Proxy-Bコンテナ (Squid) の定義
+  # ==========================================
+  proxy-b:
+  image: ubuntu/squid:latest
+  container_name: egress-proxy-b
+  volumes:
+    - ./proxy/squid.conf:/etc/squid/squid.conf:ro
+    - ./allow-list-b.txt:/etc/squid/allow-list.txt:ro
+  
+app-b:
+  build: ./app
+  container_name: egress-app-b
+  depends_on:
+    - proxy-b
+  environment:
+    - APP_NAME=APP-B
+    - HTTP_PROXY=http://squid-b:3128
+    - TARGET_URL=http://example.com
+  netwoks:
+    - net-b
+  
+networks:
+  net-a:
+  net-b:

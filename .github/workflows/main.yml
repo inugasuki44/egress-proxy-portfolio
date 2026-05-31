@@ -18,14 +18,27 @@ jobs:
 
       - name: 1.5. JSONをSquid用のテキストリンクへ変換 # チェックアウトより後に実行しないと、JSONファイルがUbuntuにないのでパニック起こす
         run: |
-          jq -r '.allowed_domains[]' allow-list.json > allow-list.txt
+          # A用のJSONをテキストに変換
           # jqコマンドで"allowed_domains"の中身だけ取り出してテキストへ変換
+          jq -r '.allowed_domains[]' allow-list-a.json > allow-list-a.txt
 
-          echo "--- 生成されたallow-list.txtの中身をデバッグ出力 ---"
-          cat allow-list.txt
+          echo "--- 生成されたallow-list-a.txtの中身をデバッグ出力 ---"
+          cat allow-list-a.txt
+
+          # B用のJSONをテキストに変換
+          # jqコマンドで"allowed_domains"の中身だけ取り出してテキストへ変換
+          jq -r '.allowed_domains[]' allow-list-b.json > allow-list-b.txt
+
+          echo "--- 生成されたallow-list-b.txtの中身をデバッグ出力 ---"
+          cat allow-list-b.txt
           
       
       - name: 2. Docker Compose
         run: |
-          docker compose up --build --abort-on-container-exit
-        # これ書かないとSquidが常時監視状態になってActionsが終了できない。タイムアウトする。
+          # proxy-a,proxy-bをそれぞれバックグラウンドで起動
+          docker compose up --build -d proxy-a proxy-b
+
+          docker compose run --rm app-a
+          docker compose run --rm app-b
+
+          docker compose down        
