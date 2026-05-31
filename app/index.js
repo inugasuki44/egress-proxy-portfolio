@@ -28,7 +28,7 @@ async function checkCommunication() {
 
   // テスト1：許可されるはずの通信 (httpbin.org)
   try {
-    console.log('宛先: ${targetUrl} (許可リスト対象)');
+    console.log(`宛先: ${targetUrl} (許可リスト対象)`);
     const res1 = await client.get(targetUrl);
     // HTTPステータスコード200が返ってきたら成功
     console.log(`✅ 結果: 通信成功 (Status: ${res1.status})`);
