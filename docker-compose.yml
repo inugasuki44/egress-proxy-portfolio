@@ -1,0 +1,27 @@
+services:
+  # ==========================================
+  # 1. Proxyコンテナ (Squid) の定義
+  # ==========================================
+  proxy:
+    # 自分でDockerfileを作らなくても、公式が用意している完成品をそのまま使えます
+    image: ubuntu/squid:latest
+    container_name: egress-proxy
+    ports:
+      - "3128:3128" # 手元のPCからも動作確認できるようにポートを開放
+    volumes:
+      # PC側のファイルを、コンテナの中のSquid設定フォルダに「共有(マウント)」する
+      # ※ :ro は Read Only（読み取り専用）の意味。コンテナ側から勝手に書き換えられないようにする防護策。
+      - ./proxy/squid.conf:/etc/squid/squid.conf:ro
+      - ./allow-list.txt:/etc/squid/allow-list.txt:ro
+
+  # ==========================================
+  # 2. Appコンテナ (Node.js) の定義
+  # ==========================================
+  app:
+    # appフォルダにあるDockerfileを使って、自前でコンテナをビルド(作成)するよう指示
+    build:
+      context: ./app
+    container_name: egress-app
+    depends_on:
+      # Proxyコンテナが先に立ち上がってから、Appコンテナを立ち上げるという順序指定
+      - proxy
