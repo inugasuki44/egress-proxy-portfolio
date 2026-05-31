@@ -19,7 +19,7 @@ const client = axios.create({
 async function checkCommunication() {
   console.log('--- Egressプロキシ通信テストを開始します ---\n');
 
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  await new Promise(resolve => setTimeout(resolve, 3000)); // ローカルでは3秒で機能したが、Actionsだと10秒くらい必要。
 
   // テスト1：許可されるはずの通信 (httpbin.org)
   try {
