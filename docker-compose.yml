@@ -46,9 +46,9 @@ app-b:
     - proxy-b
   environment:
     - APP_NAME=APP-B
-    - HTTP_PROXY=http://squid-b:3128
+    - HTTP_PROXY=http://proxy-b:3128
     - TARGET_URL=http://example.com
-  netwoks:
+  networks:
     - net-b
   
 networks:
