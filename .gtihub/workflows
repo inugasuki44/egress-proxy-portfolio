@@ -1,0 +1,22 @@
+name: CI - Proxy Test
+
+# 実行トリガーの定義
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # これが無いとGithub画面上で押すボタンが機能しない？？？イメージ
+
+jobs:
+  test:
+    name: Run Egress Proxy Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. リポジトリのチェックアウト # ここでリポジトリ上のファイルをUbuntuにチェックアウトする
+        uses: actions/checkout@v4
+      
+      - name: 2. Docker Compose
+        run: |
+          docker compose up --build --abort-on-container-exit
+        # これ書かないとSquidが常時監視状態になってActionsが終了できない。タイムアウトする。
