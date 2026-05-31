@@ -33,23 +33,23 @@ services:
   # 1. App-Bと、Proxy-Bコンテナ (Squid) の定義
   # ==========================================
   proxy-b:
-  image: ubuntu/squid:latest
-  container_name: egress-proxy-b
-  volumes:
-    - ./proxy/squid.conf:/etc/squid/squid.conf:ro
-    - ./allow-list-b.txt:/etc/squid/allow-list.txt:ro
+    image: ubuntu/squid:latest
+    container_name: egress-proxy-b
+    volumes:
+      - ./proxy/squid.conf:/etc/squid/squid.conf:ro
+      - ./allow-list-b.txt:/etc/squid/allow-list.txt:ro
   
-app-b:
-  build: ./app
-  container_name: egress-app-b
-  depends_on:
-    - proxy-b
-  environment:
-    - APP_NAME=APP-B
-    - HTTP_PROXY=http://proxy-b:3128
-    - TARGET_URL=http://example.com
-  networks:
-    - net-b
+  app-b:
+    build: ./app
+    container_name: egress-app-b
+    depends_on:
+      - proxy-b
+    environment:
+      - APP_NAME=APP-B
+      - HTTP_PROXY=http://proxy-b:3128
+      - TARGET_URL=http://example.com
+    networks:
+      - net-b
   
 networks:
   net-a:
