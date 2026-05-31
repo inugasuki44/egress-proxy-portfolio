@@ -12,7 +12,9 @@ services:
       # ※ :ro は Read Only（読み取り専用）の意味。コンテナ側から勝手に書き換えられないようにする防護策。
       - ./proxy/squid.conf:/etc/squid/squid.conf:ro
       - ./allow-list-a.txt:/etc/squid/allow-list.txt:ro
-
+    networks:
+      - net-a
+    
   app-a:
     # appフォルダにあるDockerfileを使って、自前にコンテナをビルドするよう指示している。
     build:
@@ -38,7 +40,8 @@ services:
     volumes:
       - ./proxy/squid.conf:/etc/squid/squid.conf:ro
       - ./allow-list-b.txt:/etc/squid/allow-list.txt:ro
-  
+    networks:
+      - net-b
   app-b:
     build: ./app
     container_name: egress-app-b
