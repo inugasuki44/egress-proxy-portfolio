@@ -6,6 +6,8 @@
 
 本構成最大の目的は、**システムがスケール（拡張）した際にも、権限の肥大化を防ぎ、最小権限を維持し続けること**です。
 
+[![CI - Proxy Test](https://github.com/inugasuki44/egress-proxy-portfolio.git/actions/workflows/main.yml/badge.svg)](https://github.com/inugasuki44/egress-proxy-portfolio.git/actions)
+
 Plaintext
 
 ```
